@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia de la UEFA Champions League</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #d4af37;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #00bfff;
+        }
+        .history-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #00bfff;
+            border-radius: 10px;
+        }
+        .history-container h2 {
+            color: #00bfff;
+        }
+        .loading {
+            font-size: 1.2em;
+            color: #00bfff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Historia de la Champions League segun wikipedia</h1>
+    <div class="history-container">
+        <p class="loading">Cargando datos...</p>
+        <div id="history-content"></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchChampionsLeagueHistory();
+        });
+
+        function fetchChampionsLeagueHistory() {
+            const apiUrl = 'https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&titles=UEFA_Champions_League&origin=*';
+            const historyContent = document.getElementById('history-content');
+            const loadingText = document.querySelector('.loading');
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', apiUrl, true);
+            xhr.onload = function () {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    const pages = response.query.pages;
+                    const page = Object.values(pages)[0];
+                    displayHistory(page.extract);
+                } else {
+                    loadingText.textContent = 'Error al cargar los datos.';
+                }
+            };
+            xhr.send();
+        }
+
+        function displayHistory(history) {
+            const historyContent = document.getElementById('history-content');
+            const loadingText = document.querySelector('.loading');
+            loadingText.style.display = 'none';
+            
+            const historyDiv = document.createElement('div');
+            historyDiv.innerHTML = `<p>${history}</p>`;
+            historyContent.appendChild(historyDiv);
+        }
+    </script>
+</body>
+</html>
